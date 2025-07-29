@@ -1,16 +1,14 @@
 # flutter_local_search_app
 
-A new Flutter project.
+### first generat file form to MVVM
 
-## Getting Started
-
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+```dart
+/lib
+├── main.dart
+├── home/
+│   ├── home_page.dart
+│   └── home_view_model.dart
+├── write/
+│   ├── write_page.dart
+│   └── write_view_model.dart
+```
