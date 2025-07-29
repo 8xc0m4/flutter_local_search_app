@@ -1,6 +1,6 @@
 # flutter_local_search_app
 
-### first generat file form to MVVM
+### First, generate the file structure in MVVM format.
 
 ```dart
 /lib
@@ -12,3 +12,5 @@
 │   ├── write_page.dart
 │   └── write_view_model.dart
 ```
+
+home_page_guhyone
