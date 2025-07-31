@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_local_search_app/detail/detail_page.dart';
+import 'package:flutter_local_search_app/write/write_page.dart';
 
 class HomePage extends StatelessWidget {
+  //appbar 검색창
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -11,12 +13,21 @@ class HomePage extends StatelessWidget {
         appBar: AppBar(
           title: TextField(),
         ),
-
-        // floatingActionButton: FloatingActionButton(onPressed: (){
-        //   Navigator.push(context, MaterialPageRoute(builder: (context)){
-        //     return WritePage();
-        //   },)
-        // }),
+        //Write_page로 이동 버튼
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) {
+                  return WritePage();
+                },
+              ),
+            );
+          },
+          child: Icon(Icons.edit),
+        ),
+        //바디 영역
         body: Padding(
           padding: const EdgeInsets.all(20),
           child: Column(
@@ -28,6 +39,7 @@ class HomePage extends StatelessWidget {
                   fontWeight: FontWeight.bold,
                 ),
               ),
+              //게시물 리스트
               Expanded(
                 child: ListView.separated(
                   itemCount: 10,
@@ -44,6 +56,7 @@ class HomePage extends StatelessWidget {
     );
   }
 
+  // 게시물 박스
   Widget item() {
     return Builder(
       builder: (context) {
