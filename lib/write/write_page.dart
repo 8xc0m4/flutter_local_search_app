@@ -35,6 +35,7 @@ class _WritePageState extends State<WritePage> {
               onTap: () {
                 final result = formKey.currentState?.validate() ?? false; //
               },
+              //완료버튼
               child: Container(
                 width: 50,
                 height: 50,
@@ -103,6 +104,7 @@ class _WritePageState extends State<WritePage> {
               SizedBox(
                 height: 20,
               ),
+              //사진 버튼
               Align(
                 alignment: Alignment.centerRight,
                 child: Container(

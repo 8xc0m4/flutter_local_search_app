@@ -7,10 +7,11 @@ class DetailPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         actions: [
-          //
+          //지우기버튼
           iconButton(Icons.delete, () {
             print('1');
           }),
+          //write 바로가기
           iconButton(Icons.edit, () {
             Navigator.push(
               context,
@@ -24,11 +25,14 @@ class DetailPage extends StatelessWidget {
         ],
       ),
       body: ListView(
-        padding: EdgeInsets.only(bottom: 500),
+        padding: EdgeInsets.only(bottom: 500), // 길어짐
         children: [
-          Image.asset(
-            'assets/images/henesys.png',
-            fit: BoxFit.cover,
+          Padding(
+            padding: const EdgeInsets.all(20),
+            child: Image.asset(
+              'assets/images/henesys.png',
+              fit: BoxFit.cover,
+            ),
           ),
           SizedBox(height: 20),
           Padding(
