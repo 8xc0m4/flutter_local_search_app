@@ -21,21 +21,26 @@ class WriteViewModel extends AutoDisposeFamilyNotifier<WriteState, Search?> {
   }) async {
     final searchRepository = SearchRepository();
 
+    state = WriteState(true);
+
     if (arg == null) {
-      searchRepository.insert(
+      final result = await searchRepository.insert(
         title: title,
         content: content,
         writer: writer,
-        imageUrl: imageUrl,
+        imageUrl: 'https://picsum.photos/200',
       );
+      state = WriteState(false);
+      return result;
     } else {
-      searchRepository.update(
-        id: id,
+      final result = await searchRepository.update(
+        id: arg!.id,
         title: title,
         content: content,
         writer: writer,
-        imageUrl: imageUrl,
+        imageUrl: 'https://picsum.photos/200',
       );
+      return result;
     }
   }
 }

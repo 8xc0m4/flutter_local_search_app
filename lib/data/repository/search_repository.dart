@@ -64,11 +64,25 @@ class SearchRepository {
     }
   }
 
-  void update({
+  Future<bool> update({
     required id,
     required String title,
     required String content,
     required String writer,
     required imageUrl,
-  }) {}
+  }) async {
+    try {
+      final docRef = FirebaseFirestore.instance.collection('posts').doc(id);
+      await docRef.update({
+        'writer': writer,
+        'title': title,
+        'content': content,
+        'imgUrl': 'https://picsum.photos/200',
+      });
+      return true;
+    } catch (e) {
+      print('$e');
+      return false;
+    }
+  }
 }
