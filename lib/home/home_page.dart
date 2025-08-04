@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_local_search_app/data/model/search.dart';
 import 'package:flutter_local_search_app/detail/detail_page.dart';
+import 'package:flutter_local_search_app/home/home_view_model.dart';
 import 'package:flutter_local_search_app/write/write_page.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class HomePage extends StatelessWidget {
   //appbar 검색창
@@ -39,16 +42,25 @@ class HomePage extends StatelessWidget {
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              //게시물 리스트
-              Expanded(
-                child: ListView.separated(
-                  itemCount: 10,
-                  separatorBuilder: (context, index) => SizedBox(height: 10),
-                  itemBuilder: (context, index) {
-                    return item();
-                  },
-                ),
+              SizedBox(height: 20),
+              Consumer(
+                builder: (context, ref, child) {
+                  final searchs = ref.watch(homeViewModelProvider);
+                  return Expanded(
+                    child: ListView.separated(
+                      itemCount: searchs.length,
+                      separatorBuilder: (context, index) =>
+                          SizedBox(height: 10),
+                      itemBuilder: (context, index) {
+                        final search = searchs[index];
+                        return item(search);
+                      },
+                    ),
+                  );
+                },
               ),
+
+              //게시물 리스트
             ],
           ),
         ),
@@ -57,7 +69,7 @@ class HomePage extends StatelessWidget {
   }
 
   // 게시물 박스
-  Widget item() {
+  Widget item(Search search) {
     return Builder(
       builder: (context) {
         return GestureDetector(
@@ -66,7 +78,7 @@ class HomePage extends StatelessWidget {
               context,
               MaterialPageRoute(
                 builder: (context) {
-                  return DetailPage();
+                  return DetailPage(search);
                 },
               ),
             );
@@ -84,7 +96,7 @@ class HomePage extends StatelessWidget {
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(20),
                     child: Image.asset(
-                      'assets/images/henesys.png',
+                      search.imageUrl,
                       fit: BoxFit.cover,
                     ),
                   ),
@@ -102,7 +114,7 @@ class HomePage extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        '헤네시스',
+                        search.title,
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 14,
@@ -110,7 +122,7 @@ class HomePage extends StatelessWidget {
                       ),
                       Spacer(),
                       Text(
-                        '가상현실>게임>넥슨복지센터',
+                        search.content,
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(
                           color: Colors.grey,
@@ -119,7 +131,7 @@ class HomePage extends StatelessWidget {
                       ),
                       SizedBox(height: 4),
                       Text(
-                        '메이플 월드시 메이플 아일랜드구 여섯교차로 헤네시스 23-4 궁수훈련소',
+                        search.createdAt.toIso8601String(),
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(
                           color: Colors.grey,

@@ -1,5 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_local_search_app/data/repository/search_repository.dart';
 import 'package:flutter_local_search_app/firebase_options.dart';
 import 'package:flutter_local_search_app/home/home_page.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -9,6 +10,13 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
+  );
+  final searchRepo = SearchRepository();
+  searchRepo.insert(
+    title: 'title',
+    content: 'content',
+    writer: 'writer',
+    imageUrl: 'https://picsum.photos/200/300',
   );
 
   runApp(ProviderScope(child: MyApp()));

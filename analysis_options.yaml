@@ -31,3 +31,4 @@ formatter:
 analyzer:
   errors:
     empty_constructor_bodies: ignore
+    unused_local_variable: ignore

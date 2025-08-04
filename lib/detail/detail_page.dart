@@ -1,15 +1,29 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_local_search_app/data/model/search.dart';
+import 'package:flutter_local_search_app/detail/detail_view_model.dart';
 import 'package:flutter_local_search_app/write/write_page.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class DetailPage extends StatelessWidget {
+class DetailPage extends ConsumerWidget {
+  DetailPage(this.search);
+
+  Search search;
+
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final state = ref.watch(detailViewModelProvider(search));
+
     return Scaffold(
       appBar: AppBar(
         actions: [
           //지우기버튼
-          iconButton(Icons.delete, () {
+          iconButton(Icons.delete, () async {
             print('1');
+            final vm = ref.read(detailViewModelProvider(search).notifier);
+            final result = await vm.deleteSearch();
+            if (result) {
+              Navigator.pop(context);
+            }
           }),
           //write 바로가기
           iconButton(Icons.edit, () {
@@ -29,8 +43,8 @@ class DetailPage extends StatelessWidget {
         children: [
           Padding(
             padding: const EdgeInsets.all(20),
-            child: Image.asset(
-              'assets/images/henesys.png',
+            child: Image.network(
+              state.imageUrl,
               fit: BoxFit.cover,
             ),
           ),
@@ -41,21 +55,21 @@ class DetailPage extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'henesys',
+                  state.title,
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                 ),
                 SizedBox(height: 14),
                 Text(
-                  '로키키',
+                  state.write,
                   style: TextStyle(fontSize: 14),
                 ),
                 Text(
-                  '2025.07.30',
+                  state.createdAt.toIso8601String(),
                   style: TextStyle(fontSize: 14, fontWeight: FontWeight.w200),
                 ),
                 SizedBox(height: 14),
                 Text(
-                  '멋진 궁수가 되겠습니다.' * 10,
+                  state.content,
                   style: TextStyle(fontSize: 14),
                 ),
               ],
