@@ -5,82 +5,86 @@ import 'package:flutter_local_search_app/home/home_view_model.dart';
 import 'package:flutter_local_search_app/write/write_page.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class HomePage extends StatelessWidget {
-  //appbar 검색창
+class HomePage extends ConsumerStatefulWidget {
+  @override
+  ConsumerState<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends ConsumerState<HomePage> {
+  // 검색창 텍스트 컨트롤러
+  final TextEditingController _searchController = TextEditingController();
+
+  @override
+  void dispose() {
+    // 메모리 누수 방지 위해 컨트롤러 해제
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  // 검색어 입력 후 엔터 누르면 호출되는 콜백
+  void _onSearchSubmitted(String query) {
+    // TODO: 네이버 지역 검색 API 연동 및 ViewModel에 검색어 전달
+    print('검색어 입력됨: $query');
+    // 예시) ref.read(homeViewModelProvider.notifier).search(query);
+  }
+
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () {},
-      child: Scaffold(
-        backgroundColor: Colors.grey[200],
-        appBar: AppBar(
-          title: TextField(),
-        ),
-        //Write_page로 이동 버튼
-        floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) {
-                  return WritePage();
-                },
-              ),
-            );
-          },
-          child: Icon(Icons.edit),
-        ),
-        //바디 영역
-        body: Padding(
-          padding: const EdgeInsets.all(20),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                '글자가 잘 나오네',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              SizedBox(height: 20),
-              Consumer(
-                builder: (context, ref, child) {
-                  final searchs = ref.watch(homeViewModelProvider);
-                  return Expanded(
-                    child: ListView.separated(
-                      itemCount: searchs.length,
-                      separatorBuilder: (context, index) =>
-                          SizedBox(height: 10),
-                      itemBuilder: (context, index) {
-                        final search = searchs[index];
-                        return item(search);
-                      },
-                    ),
-                  );
-                },
-              ),
+    // Riverpod으로 HomeViewModel 상태(검색 결과 리스트) 구독
+    final searchs = ref.watch(homeViewModelProvider);
 
-              //게시물 리스트
-            ],
+    return Scaffold(
+      backgroundColor: Colors.grey[200],
+      appBar: AppBar(
+        backgroundColor: Colors.deepPurple,
+        title: TextField(
+          controller: _searchController, // 검색어 입력 컨트롤러 연결
+          decoration: InputDecoration(
+            hintText: '검색어를 입력하세요',
+            border: InputBorder.none,
+            hintStyle: TextStyle(color: Colors.white70),
           ),
+          style: TextStyle(color: Colors.white),
+          textInputAction: TextInputAction.search,
+          onSubmitted: _onSearchSubmitted, // 엔터 입력시 호출
         ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          // 작성 페이지로 이동
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => WritePage(null)),
+          );
+        },
+        child: Icon(Icons.edit),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(20),
+        child: searchs.isEmpty
+            ? Center(child: Text('검색 결과가 없습니다.'))
+            : ListView.separated(
+                itemCount: searchs.length,
+                separatorBuilder: (context, index) => SizedBox(height: 10),
+                itemBuilder: (context, index) {
+                  final search = searchs[index];
+                  return _item(search);
+                },
+              ),
       ),
     );
   }
 
-  // 게시물 박스
-  Widget item(Search search) {
+  // 게시물 아이템 위젯
+  Widget _item(Search search) {
     return Builder(
       builder: (context) {
         return GestureDetector(
           onTap: () {
+            // 상세 페이지로 이동
             Navigator.push(
               context,
-              MaterialPageRoute(
-                builder: (context) {
-                  return DetailPage(search);
-                },
-              ),
+              MaterialPageRoute(builder: (context) => DetailPage(search)),
             );
           },
           child: Container(
@@ -88,14 +92,13 @@ class HomePage extends StatelessWidget {
             height: 120,
             child: Stack(
               children: [
-                //
                 Positioned(
                   right: 0,
                   width: 120,
                   height: 120,
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(20),
-                    child: Image.asset(
+                    child: Image.network(
                       search.imageUrl,
                       fit: BoxFit.cover,
                     ),

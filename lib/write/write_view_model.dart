@@ -27,10 +27,12 @@ class WriteViewModel extends AutoDisposeFamilyNotifier<WriteState, Search?> {
       final result = await searchRepository.insert(
         title: title,
         content: content,
-        writer: writer,
+        write: writer,
         imageUrl: 'https://picsum.photos/200',
       );
+      await Future.delayed(Duration(milliseconds: 500));
       state = WriteState(false);
+
       return result;
     } else {
       final result = await searchRepository.update(
@@ -40,7 +42,14 @@ class WriteViewModel extends AutoDisposeFamilyNotifier<WriteState, Search?> {
         writer: writer,
         imageUrl: 'https://picsum.photos/200',
       );
+      await Future.delayed(Duration(milliseconds: 500));
+      state = WriteState(false);
       return result;
     }
   }
 }
+
+final writeViewModelProvider = NotifierProvider.autoDispose
+    .family<WriteViewModel, WriteState, Search?>(() {
+      return WriteViewModel();
+    });

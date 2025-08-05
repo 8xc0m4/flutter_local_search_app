@@ -18,7 +18,6 @@ class DetailPage extends ConsumerWidget {
         actions: [
           //지우기버튼
           iconButton(Icons.delete, () async {
-            print('1');
             final vm = ref.read(detailViewModelProvider(search).notifier);
             final result = await vm.deleteSearch();
             if (result) {
@@ -31,7 +30,7 @@ class DetailPage extends ConsumerWidget {
               context,
               MaterialPageRoute(
                 builder: (context) {
-                  return WritePage();
+                  return WritePage(search);
                 },
               ),
             );

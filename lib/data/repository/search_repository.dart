@@ -29,7 +29,7 @@ class SearchRepository {
   Future<bool> insert({
     required String title,
     required String content,
-    required String writer,
+    required String write,
     required String imageUrl,
   }) async {
     try {
@@ -40,7 +40,7 @@ class SearchRepository {
       await docRef.set({
         'title': title,
         'content': content,
-        'writer': writer,
+        'writer': write,
         'imageUrl': imageUrl,
         'createdAt': DateTime.now().toIso8601String(),
       });
@@ -84,5 +84,37 @@ class SearchRepository {
       print('$e');
       return false;
     }
+  }
+
+  Stream<List<Search>> searchListStream() {
+    final firestore = FirebaseFirestore.instance;
+    final collectionRef = firestore.collection('search');
+    final stream = collectionRef.snapshots();
+    final newStream = stream.map((event) {
+      return event.docs.map((e) {
+        return Search.fromJson({
+          'id': e.id,
+          ...e.data(),
+        });
+      }).toList();
+    });
+    return newStream;
+  }
+
+  Stream<Search?> searchStream(String id) {
+    final firestore = FirebaseFirestore.instance;
+    final collectionRef = firestore.collection('search');
+    final docRef = collectionRef.doc(id);
+    final stream = docRef.snapshots();
+    final newStream = stream.map((e) {
+      if (e.data() == null) {
+        return null;
+      }
+      return Search.fromJson({
+        'id': e.id,
+        ...e.data()!,
+      });
+    });
+    return newStream;
   }
 }

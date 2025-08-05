@@ -1,15 +1,26 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_local_search_app/data/model/search.dart';
+import 'package:flutter_local_search_app/write/write_view_model.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class WritePage extends StatefulWidget {
+class WritePage extends ConsumerStatefulWidget {
+  WritePage(this.search);
+  Search? search;
   @override
-  State<WritePage> createState() => _WritePageState();
+  ConsumerState<WritePage> createState() => _WritePageState();
 }
 
-class _WritePageState extends State<WritePage> {
+class _WritePageState extends ConsumerState<WritePage> {
   //제목, 작성자, 내용
-  TextEditingController writeController = TextEditingController();
-  TextEditingController titleController = TextEditingController();
-  TextEditingController contentController = TextEditingController();
+  late TextEditingController writeController = TextEditingController(
+    text: widget.search?.write ?? '',
+  );
+  late TextEditingController titleController = TextEditingController(
+    text: widget.search?.title ?? '',
+  );
+  late TextEditingController contentController = TextEditingController(
+    text: widget.search?.content ?? '',
+  );
 
   GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
@@ -24,6 +35,13 @@ class _WritePageState extends State<WritePage> {
 
   @override
   Widget build(BuildContext context) {
+    final writeState = ref.watch(writeViewModelProvider(widget.search));
+    if (writeState.isWriting) {
+      return Scaffold(
+        appBar: AppBar(),
+        body: Center(child: CircularProgressIndicator()),
+      );
+    }
     return GestureDetector(
       onTap: () {
         FocusScope.of(context).unfocus();
@@ -32,9 +50,23 @@ class _WritePageState extends State<WritePage> {
         appBar: AppBar(
           actions: [
             GestureDetector(
-              onTap: () {
+              onTap: () async {
                 final result = formKey.currentState?.validate() ?? false; //
+                if (result) {
+                  final vm = ref.read(
+                    writeViewModelProvider(widget.search).notifier,
+                  );
+                  final insertResult = await vm.insert(
+                    writer: writeController.text,
+                    title: titleController.text,
+                    content: contentController.text,
+                  );
+                  if (insertResult) {
+                    Navigator.pop(context);
+                  }
+                }
               },
+
               //완료버튼
               child: Container(
                 width: 50,
